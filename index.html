@@ -57,7 +57,7 @@
                         <h4 class="mb-0 fw-semibold text-dark">Insira os dados solicitados</h4>
                     </div>
                     <div class="card-body">
-                        <form action="" method="POST">
+                        <form action="" method="POST" id="formChamado">
                             <div class="mb-3 input-group">
                                 <span class="input-group-text bg-light">
                                     <i class="fas fa-user text-secondary"></i>
@@ -142,7 +142,7 @@
                             preencha este formulário</p>
                     </div>
                     <div class="card-body">
-                        <form action="" method="post">
+                        <form action="" method="post" id="formContato">
                             <div class="mb-3 input-group">
                                 <span class="input-group-text bg-light">
                                     <i class="fas fa-user text-primary"></i>
@@ -250,6 +250,91 @@
             </div>
         </div>
     </footer>
+
+
+    <div class="modal fade" id="msgModal" tabindex="-1" aria-labelledby="msgModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="msgModalLabel">Mensagem</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="msgContent">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('formChamado').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+
+
+            fetch('backend/chamadoProcess.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    var msgContent = document.getElementById('msgContent');
+                    var modalLabel = document.getElementById('msgModalLabel');
+
+                    msgContent.innerHTML = data.msg;
+
+                    if (data.status === 'success') {
+                        modalLabel.innerHTML = 'Sucesso';
+                    } else {
+                        modalLabel.innerHTML = 'Erro';
+                    }
+
+                    var modal = new bootstrap.Modal(document.getElementById('msgModal'));
+                    modal.show();
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                });
+        });
+
+        document.getElementById('formContato').addEventListener('submit', function (e) {
+
+                e.preventDefault();
+
+                var formData = new FormData(this);
+
+
+                fetch('seu_backend.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    var msgContent = document.getElementById('msgContent');
+                    var modalLabel = document.getElementById('msgModalLabel');
+
+                    msgContent.innerHTML = data.msg;
+
+                    if (data.status === 'success') {
+                        modalLabel.innerHTML = 'Sucesso';
+                    } else {
+                        modalLabel.innerHTML = 'Erro';
+                    }
+
+                    // Exibe o modal de sucesso ou erro
+                    var modal = new bootstrap.Modal(document.getElementById('msgModal'));
+                    modal.show();
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                });
+        });
+
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
