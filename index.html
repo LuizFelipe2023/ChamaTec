@@ -147,28 +147,28 @@
                                 <span class="input-group-text bg-light">
                                     <i class="fas fa-user text-primary"></i>
                                 </span>
-                                <input type="text" class="form-control border-1" name="nome" id="nome"
+                                <input type="text" class="form-control border-1" name="nomeContato" id="nomeContato"
                                     placeholder="Seu nome completo" required>
                             </div>
                             <div class="mb-3 input-group">
                                 <span class="input-group-text bg-light">
                                     <i class="fas fa-envelope text-primary"></i>
                                 </span>
-                                <input type="email" name="email" id="email" class="form-control border-1"
+                                <input type="email" name="emailContato" id="emailContato" class="form-control border-1"
                                     placeholder="seuemail@exemplo.com" required>
                             </div>
                             <div class="mb-3 input-group">
                                 <span class="input-group-text bg-light">
                                     <i class="fas fa-phone text-primary"></i>
                                 </span>
-                                <input type="text" name="telefone" id="telefone" class="form-control border-1"
-                                    placeholder="(99) 99999-9999">
+                                <input type="text" name="telefoneContato" id="telefoneContato"
+                                    class="form-control border-1" placeholder="(99) 99999-9999">
                             </div>
                             <div class="mb-3 input-group">
                                 <span class="input-group-text bg-light">
                                     <i class="fas fa-comment-dots text-primary"></i>
                                 </span>
-                                <select class="form-select border-1" id="tipo" required>
+                                <select class="form-select border-1" id="tipoContato" required>
                                     <option selected disabled>Selecione o tipo de mensagem</option>
                                     <option value="1">Sugestão</option>
                                     <option value="2">Elogio</option>
@@ -179,7 +179,7 @@
                                 <span class="input-group-text bg-light">
                                     <i class="fas fa-comments text-primary"></i>
                                 </span>
-                                <textarea name="descricao" id="descricao" class="form-control border-1"
+                                <textarea name="descricaoContato" id="descricaoContato" class="form-control border-1"
                                     placeholder="Descreva o problema..." rows="3"></textarea>
                             </div>
                             <div class="d-grid mt-4">
@@ -251,90 +251,81 @@
         </div>
     </footer>
 
-
-    <div class="modal fade" id="msgModal" tabindex="-1" aria-labelledby="msgModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modalSucesso" tabindex="-1" aria-labelledby="modalSucessoLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="msgModalLabel">Mensagem</h5>
+                    <h5 class="modal-title" id="modalSucessoLabel">Sucesso</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body" id="msgContent">
+                <div class="modal-body">
+                    Recebido com Sucesso!
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <div class="modal fade" id="modalFracasso" tabindex="-1" aria-labelledby="modalFracassoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalFracassoLabel">Erro</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Algo deu errado. Não foi possível receber sua requisição.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <script>
         document.getElementById('formChamado').addEventListener('submit', function (e) {
-                e.preventDefault();
+            e.preventDefault();
 
-                var formData = new FormData(this);
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const telefone = document.getElementById('telefone').value;
+            const tipo = document.getElementById('tipo').value;
+            const descricao = document.getElementById('descricao').value;
 
+            const formData = { nome, email, telefone, tipo, descricao };
 
-                fetch('backend/chamadoProcess.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    var msgContent = document.getElementById('msgContent');
-                    var modalLabel = document.getElementById('msgModalLabel');
+            localStorage.setItem('formChamado', JSON.stringify(formData));
 
-                    msgContent.innerHTML = data.msg;
+            console.log("Dados armazenados no localStorage (formChamado): ", JSON.parse(localStorage.getItem('formChamado')));
 
-                    if (data.status === 'success') {
-                        modalLabel.innerHTML = 'Sucesso';
-                    } else {
-                        modalLabel.innerHTML = 'Erro';
-                    }
-
-                    var modal = new bootstrap.Modal(document.getElementById('msgModal'));
-                    modal.show();
-                })
-                .catch(error => {
-                    console.error('Erro:', error);
-                });
+            const modal = new bootstrap.Modal(document.getElementById('modalSucesso'));
+            modal.show();
         });
 
         document.getElementById('formContato').addEventListener('submit', function (e) {
+            e.preventDefault();
 
-                e.preventDefault();
+            const nomeContato = document.getElementById('nomeContato').value;
+            const emailContato = document.getElementById('emailContato').value;
+            const telefoneContato = document.getElementById('telefoneContato').value;
+            const tipoContato = document.getElementById('tipoContato').value;
+            const descricaoContato = document.getElementById('descricaoContato').value;
 
-                var formData = new FormData(this);
+            const formContatoData = { nomeContato, emailContato, telefoneContato, tipoContato, descricaoContato };
 
+            localStorage.setItem('formContato', JSON.stringify(formContatoData));
 
-                fetch('seu_backend.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    var msgContent = document.getElementById('msgContent');
-                    var modalLabel = document.getElementById('msgModalLabel');
+            console.log("Dados armazenados no localStorage (formContato): ", JSON.parse(localStorage.getItem('formContato')));
 
-                    msgContent.innerHTML = data.msg;
-
-                    if (data.status === 'success') {
-                        modalLabel.innerHTML = 'Sucesso';
-                    } else {
-                        modalLabel.innerHTML = 'Erro';
-                    }
-
-                    var modal = new bootstrap.Modal(document.getElementById('msgModal'));
-                    modal.show();
-                })
-                .catch(error => {
-                    console.error('Erro:', error);
-                });
+            const modal = new bootstrap.Modal(document.getElementById('modalSucesso'));
+            modal.show();
         });
 
     </script>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
